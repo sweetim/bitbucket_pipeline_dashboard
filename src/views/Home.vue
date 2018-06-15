@@ -1,22 +1,40 @@
 <template>
-    <div class='home'>
-        <v-btn color="success">Success</v-btn>
-        <v-btn color="error">Error</v-btn>
-        <v-btn color="warning">Warning</v-btn>
-        <v-btn color="info">Info</v-btn>
-
-        <HelloWorld msg="Welcome to Your Vue.js App"/>
-    </div>
+    <v-container
+        align-center="true"
+        align-content-center="true">
+        <v-btn
+            v-on:click="testClick"
+            round
+            color="primary"
+            dark>
+            Test
+        </v-btn>
+    </v-container>
 </template>
 
 <script>
-// @ is an alias to /src
-import HelloWorld from '@/components/HelloWorld.vue';
+
+import axios from 'axios'
 
 export default {
     name: 'home',
-    components: {
-        HelloWorld,
+    methods: {
+        testClick() {
+            const token = this.$store.getters['storageItem/getToken'];
+            const url = 'https://api.bitbucket.org/2.0/repositories/sweetim';
+                axios.get(url, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                })
+                .then((response) => {
+                    console.log(response);
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+        },
     },
 };
+
 </script>

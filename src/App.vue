@@ -5,7 +5,11 @@
             <router-link to="/about">About</router-link>
         </div>
         <v-app>
-            <router-view/>
+            <v-content>
+                <v-container fluid>
+                    <router-view/>
+                </v-container>
+            </v-content>
         </v-app>
     </div>
 </template>
