@@ -14,6 +14,12 @@ module.exports = {
         'import/prefer-default-export': ['off'],
         'arrow-parens': ['error', 'as-needed'],
         'space-before-function-paren': ['error', 'never'],
+        'no-param-reassign': ['error', {
+            props: true,
+            ignorePropertyModificationsFor: [
+                'state'
+            ]
+        }],
     },
     parserOptions: {
         parser: 'babel-eslint'

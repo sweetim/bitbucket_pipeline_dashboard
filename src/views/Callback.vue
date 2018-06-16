@@ -5,13 +5,19 @@
 <script>
 
 export default {
-    mounted() {
+    async mounted() {
         const data = window.location.hash;
-        this.$store.commit('storageItem/parseCallback', data);
+        this.$store.dispatch('storageItem/parsePayload', data);
 
         if (this.$store.getters['storageItem/isLoggedIn']) {
-            this.$router.push('/home');
-            return;
+            try {
+                await this.$store.dispatch('bitbucket/getUserInfo');
+                this.$router.push('/home');
+
+                return;
+            } catch (e) {
+                console.log(e);
+            }
         }
 
         this.$router.push('/');

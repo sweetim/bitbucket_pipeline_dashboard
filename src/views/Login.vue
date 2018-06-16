@@ -16,9 +16,9 @@
 export default {
     methods: {
         loginClick() {
-            const { clientId } = this.$store.state;
+            const link = this.$store.getters['bitbucket/implicitGrantLink'];
 
-            window.location.href = `https://bitbucket.org/site/oauth2/authorize?client_id=${clientId}&response_type=token`;
+            window.location.href = link;
         },
     },
 };

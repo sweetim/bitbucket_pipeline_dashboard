@@ -2,20 +2,13 @@ import Vue from 'vue';
 import Vuex from 'vuex';
 
 import storageItem from './storageItem';
+import bitbucket from './bitbucket';
 
 Vue.use(Vuex);
 
 export default new Vuex.Store({
-    state: {
-        clientId: 'UR83y5yGu3edgXsMAf',
-    },
-    mutations: {
-
-    },
-    actions: {
-
-    },
     modules: {
         storageItem,
+        bitbucket,
     },
 });

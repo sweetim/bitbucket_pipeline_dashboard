@@ -14,25 +14,11 @@
 
 <script>
 
-import axios from 'axios'
-
 export default {
     name: 'home',
     methods: {
         testClick() {
-            const token = this.$store.getters['storageItem/getToken'];
-            const url = 'https://api.bitbucket.org/2.0/repositories/sweetim';
-                axios.get(url, {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                })
-                .then((response) => {
-                    console.log(response);
-                })
-                .catch((error) => {
-                    console.log(error);
-                });
+            this.$store.dispatch('bitbucket/getRepositories');
         },
     },
 };
