@@ -1,2 +1,2 @@
 export const STORAGE_TOKEN = 'STORAGE_TOKEN';
-
+export const STORAGE_USER_INFO = 'STORAGE_USER_INFO';
