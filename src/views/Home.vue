@@ -3,30 +3,41 @@
         <v-flex xs12 sm8 offset-sm2>
             <v-list two-line >
                 <v-subheader inset>Please select the repositories for pipeline status</v-subheader>
-                <template v-for="(item, index) in repositories">
-                    <v-list-tile
-                        :key="item.title"
-                        href="javascript:;"
-                        ripple
-                        avatar>
-                        <v-list-tile-avatar>
-                            <img :src="item.avatar">
-                        </v-list-tile-avatar>
-                        <v-list-tile-content
-                            @click="toggleClick(index)">
-                            <v-list-tile-title>{{ item.fullName }}</v-list-tile-title>
-                            <v-list-tile-sub-title>{{ item.updatedOn }}</v-list-tile-sub-title>
-                        </v-list-tile-content>
-                        <v-list-tile-action>
-                            <v-checkbox
-                                color="indigo"
-                                readonly
-                                v-model="item.selected">
-                            </v-checkbox>
-                        </v-list-tile-action>
-                    </v-list-tile>
-                    <v-divider v-if="index + 1 < repositories.length" :key="index"></v-divider>
-                </template>
+                <div v-if="isReady">
+                    <template v-for="(item, index) in repositories">
+                        <v-list-tile
+                            :key="item.title"
+                            href="javascript:;"
+                            ripple
+                            avatar>
+                            <v-list-tile-avatar>
+                                <img :src="item.avatar">
+                            </v-list-tile-avatar>
+                            <v-list-tile-content
+                                @click="toggleClick(index)">
+                                <v-list-tile-title>{{ item.fullName }}</v-list-tile-title>
+                                <v-list-tile-sub-title>{{ item.updatedOn }}</v-list-tile-sub-title>
+                            </v-list-tile-content>
+                            <v-list-tile-action>
+                                <v-checkbox
+                                    color="indigo"
+                                    readonly
+                                    v-model="item.selected">
+                                </v-checkbox>
+                            </v-list-tile-action>
+                        </v-list-tile>
+                        <v-divider v-if="index + 1 < repositories.length" :key="index"></v-divider>
+                    </template>
+                </div>
+                <div v-else>
+                    <p class="text-xs-center">Loading...</p>
+                    <v-progress-linear
+                        :indeterminate="true"
+                        color="secondary"
+                        height="2"
+                        value="15">
+                    </v-progress-linear>
+                </div>
             </v-list>
             <v-btn
                 v-on:click="nextClick"
@@ -40,19 +51,34 @@
 
 <script>
 
+import {
+    TOGGLE_SELECTED_REPOSITORY,
+    GET_REPOSITORIES,
+} from '@/store/actions.type';
+
 export default {
     name: 'home',
+    data() {
+        return {
+            isReady: false,
+        };
+    },
     computed: {
         repositories() {
             return this.$store.state.bitbucket.repositories;
-        }
+        },
     },
-    mounted() {
-        this.$store.dispatch('bitbucket/getRepositories');
+    async mounted() {
+        this.isReady = false;
+        await this.$store.dispatch(GET_REPOSITORIES);
+        this.isReady = true;
     },
     methods: {
         nextClick() {
             this.$router.push('pipeline');
+        },
+        async toggleClick(index) {
+            await this.$store.dispatch(TOGGLE_SELECTED_REPOSITORY, index);
         },
     },
 };
