@@ -84,36 +84,6 @@ export const getters = {
             return null;
         }
     },
-    temporary() {
-        const REPO_TO_BE_MONITORED = [
-            'kaibo_setup',
-            'kaibo_core',
-            'kaibo_compo',
-            'kaibo_compomock',
-            'kaibo_config',
-            'kaibo_dashboard',
-            'kaibo_globalcompo',
-            'kaibo_hw_compo',
-            'kaibo_internet_remote',
-            'kaibo_launcher',
-            'kaibo_locker',
-            'kaibo_nfc',
-            'kaibo_recordeddata',
-            'kaibo_recplay',
-            'kaibo_tools',
-            'kaibo_visualizer',
-            'kaibo_cmake',
-            'kaibo_licenseappender',
-            'kaibo_webservicebenchmark',
-            'zmp-canusbz',
-            'zmp-jsmpeg',
-            'zmp_serializer',
-        ];
-
-        return REPO_TO_BE_MONITORED.map(x => ({
-            fullName: `ichigo_zmp/${x}`,
-        }));
-    },
 };
 
 export const mutations = {
@@ -237,7 +207,6 @@ export const actions = {
     async [GET_PIPELINE_STATUS]({
         state, getters, dispatch, commit,
     }) {
-        // const urls = getters.temporary
         const urls = getters.selectedRepositories
             .map(x => `${state.apiUrl}/repositories/${x.fullName}/pipelines/?sort=-created_on&pagelen=100`);
 
