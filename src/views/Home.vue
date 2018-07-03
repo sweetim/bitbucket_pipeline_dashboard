@@ -30,13 +30,7 @@
                     </template>
                 </div>
                 <div v-else>
-                    <p class="text-xs-center">Loading...</p>
-                    <v-progress-linear
-                        :indeterminate="true"
-                        color="secondary"
-                        height="2"
-                        value="15">
-                    </v-progress-linear>
+                    <tim-loading></tim-loading>
                 </div>
             </v-list>
             <v-btn
@@ -56,8 +50,13 @@ import {
     GET_REPOSITORIES,
 } from '@/store/actions.type';
 
+import Loading from '@/components/Loading.vue';
+
 export default {
     name: 'home',
+    components: {
+        Loading,
+    },
     data() {
         return {
             isReady: false,

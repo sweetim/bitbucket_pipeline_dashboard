@@ -37,13 +37,7 @@
                 </template>
             </v-list>
             <div v-else>
-                <p class="text-xs-center">Loading...</p>
-                <v-progress-linear
-                    :indeterminate="true"
-                    color="secondary"
-                    height="2"
-                    value="15">
-                </v-progress-linear>
+                <tim-loading></tim-loading>
             </div>
         </v-flex>
     </v-layout>
@@ -53,11 +47,16 @@
 
 import { GET_PIPELINE_STATUS } from '@/store/actions.type';
 
+import Loading from '@/components/Loading.vue';
+
 export default {
     data() {
         return {
             isReady: false,
         };
+    },
+    components: {
+        Loading,
     },
     computed: {
         pipelines() {

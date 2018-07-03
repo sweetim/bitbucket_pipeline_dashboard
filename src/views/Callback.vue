@@ -1,13 +1,7 @@
 <template>
     <v-layout row wrap>
         <v-flex xs12 sm8 offset-sm2>
-            <p class="text-xs-center">Loading...</p>
-            <v-progress-linear
-                :indeterminate="true"
-                color="secondary"
-                height="2"
-                value="15">
-            </v-progress-linear>
+            <tim-loading></tim-loading>
         </v-flex>
     </v-layout>
 </template>
@@ -18,7 +12,12 @@ import {
     GET_USER_INFO,
 } from '@/store/actions.type';
 
+import Loading from '@/components/Loading.vue';
+
 export default {
+    components: {
+        Loading,
+    },
     async mounted() {
         const data = window.location.hash;
 
