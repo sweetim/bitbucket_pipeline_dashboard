@@ -47,7 +47,7 @@
 
 import { GET_PIPELINE_STATUS } from '@/store/actions.type';
 
-import Loading from '@/components/Loading.vue';
+import TimLoading from '@/components/Loading.vue';
 
 export default {
     data() {
@@ -56,7 +56,7 @@ export default {
         };
     },
     components: {
-        Loading,
+        TimLoading,
     },
     computed: {
         pipelines() {

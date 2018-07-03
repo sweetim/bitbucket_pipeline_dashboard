@@ -12,11 +12,11 @@ import {
     GET_USER_INFO,
 } from '@/store/actions.type';
 
-import Loading from '@/components/Loading.vue';
+import TimLoading from '@/components/Loading.vue';
 
 export default {
     components: {
-        Loading,
+        TimLoading,
     },
     async mounted() {
         const data = window.location.hash;

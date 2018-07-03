@@ -63,7 +63,7 @@ function formatPipelineTitle(x) {
 }
 
 const state = {
-    clientId: 'yJgF4XwcEqNs7maaYP',
+    clientId: process.env.VUE_APP_BITBUCKET_API,
     apiUrl: 'https://api.bitbucket.org/2.0',
     repositories: [],
     pipelines: [],
