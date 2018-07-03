@@ -8,7 +8,8 @@
             <v-flex xs12 sm6 offset-sm3>
                 <div class="text-xs-center">
                     <img class="logo-spacer"
-                        src="@/assets/bitbucket_logo.png">
+                        style="width: 30vw; height: 20vh"
+                        src="@/assets/bitbucket_logo.svg">
 
                     <h1>Pipeline Dashboard</h1>
                     <p></p>
