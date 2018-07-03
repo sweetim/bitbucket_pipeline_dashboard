@@ -115,7 +115,7 @@ export const mutations = {
                 slug: x.slug,
                 uuid,
                 link: x.links.html.href,
-                updatedOn: x.updated_on,
+                updatedOn: moment(x.updated_on).fromNow(),
                 avatar: x.links.avatar.href,
                 selected,
             };
