@@ -16,6 +16,12 @@
         "vuetify": "^1.1.1",
         "vuex": "^3.0.1"
     },
+    "author": "Tim",
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/sweetim/bitbucket_pipeline_dashboard"
+    },
     "devDependencies": {
         "@babel/polyfill": "^7.0.0-beta.49",
         "@vue/cli-plugin-babel": "^3.0.0-rc.3",
