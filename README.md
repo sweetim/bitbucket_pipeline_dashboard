@@ -1,4 +1,4 @@
-## Bitbucket Pipeline Dashboard
+## Bitbucket Pipeline Dashboard [![Build Status](https://travis-ci.com/sweetim/bitbucket_pipeline_dashboard.svg?branch=master)](https://travis-ci.com/sweetim/bitbucket_pipeline_dashboard)
 
 This application is created to have a centralized view of the latest pipeline status for every selected repository
 
