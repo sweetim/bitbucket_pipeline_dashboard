@@ -7,13 +7,13 @@ before_script:
 
 jobs:
   include:
-    - stage: test
-      script: npm run test:unit
+    - stage: lint
+      script: npm run lint
     - stage: build
       script: npm run build
 
 stages:
-  - test
+  - lint
   - build
 
 notifications:
