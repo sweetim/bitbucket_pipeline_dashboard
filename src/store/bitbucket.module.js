@@ -189,9 +189,8 @@ export const actions = {
         }
     },
     async [GET_REPOSITORIES]({
-        state, dispatch, getters, commit,
+        state, dispatch, commit,
     }) {
-        const { userName } = getters.getUserInfo;
         const url = `${state.apiUrl}/repositories/?role=member&pagelen=100&sort=-updated_on`;
 
         try {
@@ -208,7 +207,7 @@ export const actions = {
         state, getters, dispatch, commit,
     }) {
         const urls = getters.selectedRepositories
-            .map(x => `${state.apiUrl}/repositories/${x.fullName}/pipelines/?sort=-created_on&pagelen=100`);
+            .map(x => `${state.apiUrl}/repositories/${x.fullName}/pipelines/?sort=-created_on&pagelen=100&target.ref_name=staging`);
 
         try {
             const res = await Promise.all(urls.map(x => dispatch(CALL_BITBUCKET_API, x)));
@@ -217,6 +216,7 @@ export const actions = {
                 .filter(x => x.data.size > 0)
                 .map(x => x.data.values[0]);
 
+            console.log(pipelines);
             commit(SET_PIPELINES, pipelines);
         } catch (e) {
             console.log(e);
@@ -226,6 +226,8 @@ export const actions = {
         const token = getters.getToken;
 
         try {
+            console.log(url);
+            console.log(`${token}`);
             const res = await axios.get(url, {
                 headers: {
                     Authorization: `Bearer ${token}`,
