@@ -216,7 +216,6 @@ export const actions = {
                 .filter(x => x.data.size > 0)
                 .map(x => x.data.values[0]);
 
-            console.log(pipelines);
             commit(SET_PIPELINES, pipelines);
         } catch (e) {
             console.log(e);
@@ -226,8 +225,6 @@ export const actions = {
         const token = getters.getToken;
 
         try {
-            console.log(url);
-            console.log(`${token}`);
             const res = await axios.get(url, {
                 headers: {
                     Authorization: `Bearer ${token}`,
