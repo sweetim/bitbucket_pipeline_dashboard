@@ -207,7 +207,7 @@ export const actions = {
         state, getters, dispatch, commit,
     }) {
         const urls = getters.selectedRepositories
-            .map(x => `${state.apiUrl}/repositories/${x.fullName}/pipelines/?sort=-created_on&pagelen=100&target.ref_name=staging`);
+            .map(x => `${state.apiUrl}/repositories/${x.fullName}/pipelines/?sort=-created_on&pagelen=100`);
 
         try {
             const res = await Promise.all(urls.map(x => dispatch(CALL_BITBUCKET_API, x)));
