@@ -192,7 +192,7 @@ export const actions = {
         state, dispatch, getters, commit,
     }) {
         const { userName } = getters.getUserInfo;
-        const url = `${state.apiUrl}/repositories/${userName}/?pagelen=100`;
+        const url = `${state.apiUrl}/repositories/?role=member&pagelen=100&sort=-updated_on`;
 
         try {
             const res = await dispatch(CALL_BITBUCKET_API, url);
