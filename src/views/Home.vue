@@ -23,7 +23,6 @@
                         <v-list-tile-action>
                             <v-checkbox
                                 color="indigo"
-                                readonly
                                 v-model="item.selected">
                             </v-checkbox>
                         </v-list-tile-action>
