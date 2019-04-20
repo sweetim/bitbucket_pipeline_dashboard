@@ -103,23 +103,25 @@ export const mutations = {
         state.userInfo = '';
     },
     [SET_REPOSITORIES](state, data) {
-        const values = data.values || [];
+        const values = data || [];
 
-        state.repositories = values.map(x => {
-            const { uuid } = x;
-            const selected = localStorage.getItem(uuid) || false;
+        state.repositories = values
+            .map(x => {
+                const { uuid } = x;
+                const selected = localStorage.getItem(uuid) === 'true';
 
-            return {
-                fullName: x.full_name,
-                name: x.name,
-                slug: x.slug,
-                uuid,
-                link: x.links.html.href,
-                updatedOn: moment(x.updated_on).fromNow(),
-                avatar: x.links.avatar.href,
-                selected,
-            };
-        });
+                return {
+                    fullName: x.full_name,
+                    name: x.name,
+                    slug: x.slug,
+                    uuid,
+                    link: x.links.html.href,
+                    updatedOn: moment(x.updated_on).fromNow(),
+                    avatar: x.links.avatar.href,
+                    selected,
+                };
+            })
+            .sort((a, b) => b.selected - a.selected);
     },
     [SET_PIPELINES](state, data) {
         const values = data || [];
@@ -191,14 +193,33 @@ export const actions = {
     async [GET_REPOSITORIES]({
         state, dispatch, commit,
     }) {
-        const url = `${state.apiUrl}/repositories/?role=member&pagelen=100&sort=-updated_on`;
+        function loadAllRepos(url) {
+            const repos = [];
+
+            async function loadRepoUrl(url) {
+                const res = await dispatch(CALL_BITBUCKET_API, url);
+
+                if (res.status === 200) {
+                    repos.push(res.data);
+                    if (res.data.next) {
+                        return loadRepoUrl(res.data.next);
+                    }
+                }
+
+                return repos;
+            }
+
+            return loadRepoUrl(url);
+        }
 
         try {
-            const res = await dispatch(CALL_BITBUCKET_API, url);
+            const url = `${state.apiUrl}/repositories/?role=member&pagelen=100&sort=-updated_on`;
+            const data = await loadAllRepos(url);
 
-            if (res.status === 200) {
-                commit(SET_REPOSITORIES, res.data);
-            }
+            commit(
+                SET_REPOSITORIES,
+                data.reduce((a, b) => a.concat(b.values), []),
+            );
         } catch (e) {
             console.log(e);
         }
