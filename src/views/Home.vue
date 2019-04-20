@@ -1,8 +1,15 @@
 <template>
     <v-layout row wrap>
         <v-flex xs12 sm8 offset-sm2>
+            <v-text-field
+                v-if="isReady"
+                placeholder="Search repository by name"
+                solo
+                v-model="searchKey"
+            ></v-text-field>
             <v-list two-line
-                v-if="isReady">
+                v-if="isReady"
+            >
                 <v-subheader inset>Please select the repositories for pipeline status</v-subheader>
                 <template v-for="(item, index) in repositories">
                     <v-list-tile
@@ -30,15 +37,16 @@
                     <v-divider v-if="index + 1 < repositories.length" :key="index"></v-divider>
                 </template>
             </v-list>
-            <div v-else>
-                <tim-loading></tim-loading>
-            </div>
             <v-btn
-                v-on:click="nextClick"
+                v-if="isReady"
+                @click="nextClick"
                 color="primary"
                 dark>
                 Next
             </v-btn>
+            <tim-loading
+                v-if="!isReady"
+            ></tim-loading>
         </v-flex>
     </v-layout>
 </template>
@@ -60,11 +68,15 @@ export default {
     data() {
         return {
             isReady: false,
+            searchKey: '',
         };
     },
     computed: {
         repositories() {
-            return this.$store.state.bitbucket.repositories;
+            return this.$store.state.bitbucket.repositories
+                .filter(({ name }) => name
+                    .toLocaleLowerCase()
+                    .includes(this.searchKey.toLocaleLowerCase()));
         },
     },
     async mounted() {
