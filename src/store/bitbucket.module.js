@@ -237,6 +237,10 @@ export const actions = {
     async [GET_PIPELINE_STATUS]({
         state, getters, dispatch, commit,
     }) {
+        if (getters.selectedRepositories.length === 0) {
+            await dispatch(GET_REPOSITORIES);
+        }
+
         const urls = getters.selectedRepositories
             .map(x => `${state.apiUrl}/repositories/${x.fullName}/pipelines/?sort=-created_on&pagelen=100`);
 
