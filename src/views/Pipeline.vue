@@ -3,14 +3,17 @@
         <v-flex xs12 sm8 offset-sm2>
             <v-list
                 v-if="isReady"
-                three-line>
+                three-line
+            >
                 <template v-for="(item, index) in pipelines">
                     <v-list-tile
                         :key="item.uuid"
-                        avatar>
+                        avatar
+                    >
                         <v-list-tile-avatar>
                             <img :src="item.avatar"
-                                :title="item.userName">
+                                :title="item.userName"
+                            >
                         </v-list-tile-avatar>
                         <v-list-tile-content>
                             <v-list-tile-title>
