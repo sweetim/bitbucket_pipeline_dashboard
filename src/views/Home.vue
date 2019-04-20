@@ -1,15 +1,14 @@
 <template>
     <v-layout row wrap>
-        <v-flex xs12 sm8 offset-sm2>
+        <v-flex xs12 sm8 offset-sm2
+            v-if="isReady"
+        >
             <v-text-field
-                v-if="isReady"
-                placeholder="Search repository by name"
                 solo
+                label="Search repository by name"
                 v-model="searchKey"
             ></v-text-field>
-            <v-list two-line
-                v-if="isReady"
-            >
+            <v-list two-line>
                 <v-subheader inset>Please select the repositories for pipeline status</v-subheader>
                 <template v-for="(item, index) in repositories">
                     <v-list-tile
@@ -38,15 +37,16 @@
                 </template>
             </v-list>
             <v-btn
-                v-if="isReady"
                 @click="nextClick"
                 color="primary"
                 dark>
                 Next
             </v-btn>
-            <tim-loading
-                v-if="!isReady"
-            ></tim-loading>
+        </v-flex>
+        <v-flex xs12 sm8 offset-sm2
+            v-else
+        >
+            <tim-loading></tim-loading>
         </v-flex>
     </v-layout>
 </template>
