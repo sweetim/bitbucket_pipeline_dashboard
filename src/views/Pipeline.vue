@@ -1,13 +1,14 @@
 <template>
     <v-layout row wrap>
-        <v-flex xs12 sm8 offset-sm2>
+        <v-flex xs12 sm8 offset-sm2
+            v-if="isReady"
+        >
             <v-text-field
                 solo
                 label="Search repository by name"
                 v-model="searchKey"
             ></v-text-field>
             <v-list
-                v-if="isReady"
                 three-line
             >
                 <template v-for="(item, index) in pipelines">
@@ -44,23 +45,26 @@
                     <v-divider v-if="index + 1 < pipelines.length" :key="index"></v-divider>
                 </template>
             </v-list>
-            <div v-else>
-                <tim-loading></tim-loading>
-            </div>
+
+            <v-fab-transition>
+                <v-btn
+                    @click="refreshClick"
+                    color="red"
+                    dark
+                    fab
+                    fixed
+                    bottom
+                    right
+                >
+                    <v-icon>refresh</v-icon>
+                </v-btn>
+            </v-fab-transition>
         </v-flex>
-        <v-fab-transition>
-            <v-btn
-                @click="refreshClick"
-                color="red"
-                dark
-                fab
-                fixed
-                bottom
-                right
-            >
-                <v-icon>refresh</v-icon>
-            </v-btn>
-        </v-fab-transition>
+        <v-flex xs12 sm8 offset-sm2
+            v-else
+        >
+            <tim-loading></tim-loading>
+        </v-flex>
     </v-layout>
 </template>
 
