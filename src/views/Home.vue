@@ -21,7 +21,7 @@
                             <img :src="item.avatar">
                         </v-list-tile-avatar>
                         <v-list-tile-content
-                            @click="toggleClick(index)">
+                            @click="toggleClick(item.uuid)">
                             <v-list-tile-title>{{ item.fullName }}</v-list-tile-title>
                             <v-list-tile-sub-title>
                                 Last updated {{ item.updatedOn }}
@@ -88,8 +88,8 @@ export default {
         nextClick() {
             this.$router.push('pipeline');
         },
-        async toggleClick(index) {
-            await this.$store.dispatch(TOGGLE_SELECTED_REPOSITORY, index);
+        async toggleClick(uuid) {
+            await this.$store.dispatch(TOGGLE_SELECTED_REPOSITORY, uuid);
         },
     },
 };

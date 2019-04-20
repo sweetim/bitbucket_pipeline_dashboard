@@ -66,6 +66,7 @@ const state = {
     clientId: process.env.VUE_APP_BITBUCKET_API,
     apiUrl: 'https://api.bitbucket.org/2.0',
     repositories: [],
+    repositoriesHash: {},
     pipelines: [],
     userInfo: localStorage.getItem(STORAGE_USER_INFO) || '',
 };
@@ -103,9 +104,9 @@ export const mutations = {
         state.userInfo = '';
     },
     [SET_REPOSITORIES](state, data) {
-        const values = data || [];
+        const values = data || {};
 
-        state.repositories = values
+        state.repositoriesHash = values
             .map(x => {
                 const { uuid } = x;
                 const selected = localStorage.getItem(uuid) === 'true';
@@ -121,6 +122,17 @@ export const mutations = {
                     selected,
                 };
             })
+            .reduce((a, b) => {
+                const { uuid } = b;
+                if (!a[uuid]) {
+                    // eslint-disable-next-line no-param-reassign
+                    a[uuid] = b;
+                }
+
+                return a;
+            }, {});
+
+        state.repositories = Object.values(state.repositoriesHash)
             .sort((a, b) => b.selected - a.selected);
     },
     [SET_PIPELINES](state, data) {
@@ -155,17 +167,15 @@ export const mutations = {
             })
             .sort((a, b) => (b.resultLevel - a.resultLevel || b.time - a.time));
     },
-    [SET_SELECTED_REPOSITORY](state, index) {
-        const status = state.repositories[index].selected;
-        state.repositories[index].selected = !status;
+    [SET_SELECTED_REPOSITORY](state, uuid) {
+        const { selected } = state.repositoriesHash[uuid];
+        const toggleSelected = !selected;
+        state.repositoriesHash[uuid].selected = toggleSelected;
 
-        const value = state.repositories[index].selected;
-        const key = state.repositories[index].uuid;
-
-        if (value) {
-            localStorage.setItem(key, value);
+        if (toggleSelected) {
+            localStorage.setItem(uuid, toggleSelected);
         } else {
-            localStorage.removeItem(key);
+            localStorage.removeItem(uuid);
         }
     },
 };
