@@ -43,6 +43,19 @@
                 <tim-loading></tim-loading>
             </div>
         </v-flex>
+        <v-fab-transition>
+            <v-btn
+                @click="refreshClick"
+                color="red"
+                dark
+                fab
+                fixed
+                bottom
+                right
+            >
+                <v-icon>refresh</v-icon>
+            </v-btn>
+        </v-fab-transition>
     </v-layout>
 </template>
 
@@ -70,6 +83,13 @@ export default {
         this.isReady = false;
         await this.$store.dispatch(GET_PIPELINE_STATUS);
         this.isReady = true;
+    },
+    methods: {
+        async refreshClick() {
+            this.isReady = false;
+            await this.$store.dispatch(GET_PIPELINE_STATUS);
+            this.isReady = true;
+        },
     },
 };
 

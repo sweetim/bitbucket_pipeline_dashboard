@@ -39,7 +39,8 @@
             <v-btn
                 @click="nextClick"
                 color="primary"
-                dark>
+                dark
+            >
                 Next
             </v-btn>
         </v-flex>
