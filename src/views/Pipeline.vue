@@ -1,6 +1,11 @@
 <template>
     <v-layout row wrap>
         <v-flex xs12 sm8 offset-sm2>
+            <v-text-field
+                solo
+                label="Search repository by name"
+                v-model="searchKey"
+            ></v-text-field>
             <v-list
                 v-if="isReady"
                 three-line
@@ -69,6 +74,7 @@ export default {
     data() {
         return {
             isReady: false,
+            searchKey: '',
         };
     },
     components: {
@@ -76,7 +82,10 @@ export default {
     },
     computed: {
         pipelines() {
-            return this.$store.state.bitbucket.pipelines;
+            return this.$store.state.bitbucket.pipelines
+                .filter(({ repoSlug }) => repoSlug
+                    .toLocaleLowerCase()
+                    .includes(this.searchKey.toLocaleLowerCase()));
         },
     },
     async mounted() {
