@@ -15,7 +15,7 @@ module.exports = {
         'arrow-parens': ['error', 'as-needed'],
         'space-before-function-paren': ['error', 'never'],
         'array-bracket-spacing': ['error', 'always'],
-        'max-len': ['error', { "code": 160 }],
+        'max-len': ['error', { "code": 200 }],
         'no-param-reassign': ['error', {
             props: true,
             ignorePropertyModificationsFor: [

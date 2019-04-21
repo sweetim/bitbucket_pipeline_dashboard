@@ -9,7 +9,9 @@
                 v-model="searchKey"
             ></v-text-field>
             <v-list two-line>
-                <v-subheader>There are {{ repositories.length }} repositories, select the interested repositories for pipeline status and click NEXT at the bottom of the page</v-subheader>
+                <v-subheader>
+                    There are {{ repositories.length }} repositories,select the interested repositories for pipeline status and click NEXT at the bottom of the page
+                </v-subheader>
                 <template v-for="(item, index) in repositories">
                     <v-list-tile
                         :key="item.title"
