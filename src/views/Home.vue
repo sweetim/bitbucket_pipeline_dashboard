@@ -15,12 +15,13 @@
                         :key="item.title"
                         href="javascript:;"
                         ripple
-                        avatar>
+                        avatar
+                    >
                         <v-list-tile-avatar>
                             <img :src="item.avatar">
                         </v-list-tile-avatar>
                         <v-list-tile-content
-                            @click="toggleClick(item.uuid)">
+                            @click="toggleClick(item.fullName)">
                             <v-list-tile-title>{{ item.fullName }}</v-list-tile-title>
                             <v-list-tile-sub-title>
                                 Last updated {{ item.updatedOn }}
@@ -89,8 +90,8 @@ export default {
         nextClick() {
             this.$router.push('pipeline');
         },
-        async toggleClick(uuid) {
-            await this.$store.dispatch(TOGGLE_SELECTED_REPOSITORY, uuid);
+        async toggleClick(fullName) {
+            await this.$store.dispatch(TOGGLE_SELECTED_REPOSITORY, fullName);
         },
     },
 };

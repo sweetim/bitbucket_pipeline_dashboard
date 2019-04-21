@@ -8,44 +8,79 @@
                 label="Search repository by name"
                 v-model="searchKey"
             ></v-text-field>
-            <v-list
-                three-line
-            >
+            <p>Click the repository row to show the pipeline history</p>
+            <v-expansion-panel :popout="true">
                 <template v-for="(item, index) in pipelines">
-                    <v-list-tile
-                        :key="item.uuid"
-                        avatar
+                    <v-expansion-panel-content
+                        :key="index"
                     >
-                        <v-list-tile-avatar>
-                            <img :src="item.avatar"
-                                :title="item.userName"
+                        <template v-slot:actions>
+                            <v-icon :color="item[0].resultColor.replace(/--text/, '')">{{ item[0].resultIcon }}</v-icon>
+                        </template>
+                        <template v-slot:header>
+                            <v-layout
+                                align-center
+                                justify-start
+                                row
                             >
-                        </v-list-tile-avatar>
-                        <v-list-tile-content>
-                            <v-list-tile-title>
-                                <a :class="item.resultColor"
-                                    :href="item.link"
-                                    target="_blank">
-                                    #{{item.id}} {{ item.repoSlug }}
-                                </a>
-                            </v-list-tile-title>
-                            <v-list-tile-sub-title>
-                                {{ item.pipelineTitle }}
-                            </v-list-tile-sub-title>
-                            <v-list-tile-sub-title>
-                                Created on: {{ item.createdOn }} ({{ item.buildSeconds }} seconds)
-                            </v-list-tile-sub-title>
-                        </v-list-tile-content>
-                        <v-list-tile-action>
-                            <v-icon :class="item.resultColor">
-                                {{ item.resultIcon }}
-                            </v-icon>
-                        </v-list-tile-action>
-                    </v-list-tile>
-                    <v-divider v-if="index + 1 < pipelines.length" :key="index"></v-divider>
+                                <v-list-tile-avatar>
+                                    <img :src="item[0].repoAvatar"
+                                        :title="item[0].fullName"
+                                    >
+                                </v-list-tile-avatar>
+                                <v-list-tile-content>
+                                    <v-list-tile-title
+                                        :class="item[0].resultColor"
+                                        style="font-size:large;"
+                                    >
+                                        {{ item[0].fullName }}
+                                    </v-list-tile-title>
+                                    <v-list-tile-sub-title
+                                        class="caption grey--text"
+                                    >
+                                        Created on: {{ item[0].createdOn }} ({{ item[0].buildSeconds }} seconds)
+                                    </v-list-tile-sub-title>
+                                </v-list-tile-content>
+                            </v-layout>
+                        </template>
+                        <v-card>
+                             <v-list two-line subheader>
+                                <template v-for="(x, index) in item">
+                                    <v-list-tile
+                                        :key="x.uuid"
+                                        avatar
+                                    >
+                                        <v-list-tile-avatar>
+                                            <img :src="x.avatar"
+                                                :title="x.userName"
+                                            >
+                                        </v-list-tile-avatar>
+                                        <v-list-tile-content>
+                                            <v-list-tile-title>
+                                                <a :class="x.resultColor"
+                                                    :href="x.link"
+                                                    target="_blank"
+                                                >
+                                                    #{{x.id}} {{ x.pipelineTitle }}
+                                                </a>
+                                            </v-list-tile-title>
+                                            <v-list-tile-sub-title>
+                                                Created on: {{ x.createdOn }} ({{ x.buildSeconds }} seconds)
+                                            </v-list-tile-sub-title>
+                                        </v-list-tile-content>
+                                        <v-list-tile-action>
+                                            <v-icon :class="x.resultColor">
+                                                {{ x.resultIcon }}
+                                            </v-icon>
+                                        </v-list-tile-action>
+                                    </v-list-tile>
+                                    <v-divider v-if="index + 1 < item.length" :key="index"></v-divider>
+                                </template>
+                            </v-list>
+                        </v-card>
+                    </v-expansion-panel-content>
                 </template>
-            </v-list>
-
+            </v-expansion-panel>
             <v-fab-transition>
                 <v-btn
                     @click="refreshClick"
@@ -87,7 +122,7 @@ export default {
     computed: {
         pipelines() {
             return this.$store.state.bitbucket.pipelines
-                .filter(({ repoSlug }) => repoSlug
+                .filter(([ x ]) => x.fullName
                     .toLocaleLowerCase()
                     .includes(this.searchKey.toLocaleLowerCase()));
         },
@@ -114,4 +149,3 @@ export default {
         text-decoration: none;
     }
 </style>
-

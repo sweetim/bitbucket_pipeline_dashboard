@@ -36,7 +36,8 @@ function convertResultToLevel(result) {
 function convertResultToColor(result) {
     const COLOR = {
         FAILED: 'red',
-        RUNNING: 'amber',
+        STOPPED: 'orange',
+        RUNNING: 'lime',
         SUCCESSFUL: 'light-green',
     };
 
@@ -46,6 +47,7 @@ function convertResultToColor(result) {
 function convertResultToIcon(result) {
     const ICON = {
         FAILED: 'error_outline',
+        STOPPED: 'stop',
         RUNNING: 'refresh',
         SUCCESSFUL: 'done',
     };
@@ -108,14 +110,14 @@ export const mutations = {
 
         state.repositoriesHash = values
             .map(x => {
-                const { uuid } = x;
-                const selected = localStorage.getItem(uuid) === 'true';
+                const fullName = x.full_name;
+                const selected = localStorage.getItem(fullName) === 'true';
 
                 return {
-                    fullName: x.full_name,
+                    fullName,
                     name: x.name,
                     slug: x.slug,
-                    uuid,
+                    uuid: x.uuid,
                     link: x.links.html.href,
                     updatedOn: moment(x.updated_on).fromNow(),
                     avatar: x.links.avatar.href,
@@ -123,10 +125,10 @@ export const mutations = {
                 };
             })
             .reduce((a, b) => {
-                const { uuid } = b;
-                if (!a[uuid]) {
+                const { fullName } = b;
+                if (!a[fullName]) {
                     // eslint-disable-next-line no-param-reassign
-                    a[uuid] = b;
+                    a[fullName] = b;
                 }
 
                 return a;
@@ -139,43 +141,45 @@ export const mutations = {
         const values = data || [];
 
         state.pipelines = values
-            .map(x => {
-                const pipelineTitle = formatPipelineTitle(x);
-                const result = (x.state.result && x.state.result.name) || 'RUNNING';
+            .map(x => x.map(y => {
+                const fullName = y.repository.full_name;
+                const pipelineTitle = formatPipelineTitle(y);
+                const result = (y.state.result && y.state.result.name) || 'RUNNING';
                 const resultLevel = convertResultToLevel(result);
                 const resultColor = convertResultToColor(result);
                 const resultIcon = convertResultToIcon(result);
 
                 return {
-                    uuid: x.uuid,
-                    repoSlug: x.repository.full_name,
-                    id: x.build_number,
+                    uuid: y.uuid,
+                    fullName,
+                    id: y.build_number,
                     pipelineTitle,
-                    status: x.state.name || '',
+                    status: y.state.name || '',
                     result,
                     resultLevel,
                     resultColor,
                     resultIcon,
-                    userName: x.creator && x.creator.display_name,
-                    avatar: x.creator && x.creator.links.avatar.href,
-                    link: `https://bitbucket.org/${x.repository.full_name}/addon/pipelines/home#!/results/${x.build_number}`,
-                    completedOn: moment(x.completed_on).fromNow(),
-                    createdOn: moment(x.created_on).fromNow(),
-                    time: moment(x.created_on).valueOf(),
-                    buildSeconds: x.build_seconds_used,
+                    userName: y.creator && y.creator.display_name,
+                    avatar: y.creator && y.creator.links.avatar.href,
+                    repoAvatar: state.repositoriesHash[fullName].avatar,
+                    link: `https://bitbucket.org/${y.repository.full_name}/addon/pipelines/home#!/results/${y.build_number}`,
+                    completedOn: moment(y.completed_on).fromNow(),
+                    createdOn: moment(y.created_on).fromNow(),
+                    time: moment(y.created_on).valueOf(),
+                    buildSeconds: y.build_seconds_used,
                 };
-            })
-            .sort((a, b) => (b.resultLevel - a.resultLevel || b.time - a.time));
+            }))
+            .sort((a, b) => (b[0].resultLevel - a[0].resultLevel || b[0].time - a[0].time));
     },
-    [SET_SELECTED_REPOSITORY](state, uuid) {
-        const { selected } = state.repositoriesHash[uuid];
+    [SET_SELECTED_REPOSITORY](state, fullName) {
+        const { selected } = state.repositoriesHash[fullName];
         const toggleSelected = !selected;
-        state.repositoriesHash[uuid].selected = toggleSelected;
+        state.repositoriesHash[fullName].selected = toggleSelected;
 
         if (toggleSelected) {
-            localStorage.setItem(uuid, toggleSelected);
+            localStorage.setItem(fullName, toggleSelected);
         } else {
-            localStorage.removeItem(uuid);
+            localStorage.removeItem(fullName);
         }
     },
 };
@@ -184,8 +188,8 @@ export const actions = {
     [IMPLICIT_GRANT_LINK]({ state }) {
         return `https://bitbucket.org/site/oauth2/authorize?client_id=${state.clientId}&response_type=token`;
     },
-    [TOGGLE_SELECTED_REPOSITORY]({ commit }, index) {
-        commit(SET_SELECTED_REPOSITORY, index);
+    [TOGGLE_SELECTED_REPOSITORY]({ commit }, fullName) {
+        commit(SET_SELECTED_REPOSITORY, fullName);
     },
     async [GET_USER_INFO]({ state, dispatch, commit }) {
         const url = `${state.apiUrl}/user?fields=account_id,links.avatar.href,links.html.href,username`;
@@ -241,15 +245,16 @@ export const actions = {
             await dispatch(GET_REPOSITORIES);
         }
 
+        const MAX_PIPELINE_HISTORY = 5;
         const urls = getters.selectedRepositories
-            .map(x => `${state.apiUrl}/repositories/${x.fullName}/pipelines/?sort=-created_on&pagelen=100`);
+            .map(x => `${state.apiUrl}/repositories/${x.fullName}/pipelines/?sort=-created_on&pagelen=${MAX_PIPELINE_HISTORY}`);
 
         try {
             const res = await Promise.all(urls.map(x => dispatch(CALL_BITBUCKET_API, x)));
 
             const pipelines = res.filter(x => x.status === 200)
                 .filter(x => x.data.size > 0)
-                .map(x => x.data.values[0]);
+                .map(x => x.data.values);
 
             commit(SET_PIPELINES, pipelines);
         } catch (e) {
