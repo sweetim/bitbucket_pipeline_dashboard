@@ -14,6 +14,8 @@ module.exports = {
         'import/prefer-default-export': ['off'],
         'arrow-parens': ['error', 'as-needed'],
         'space-before-function-paren': ['error', 'never'],
+        'array-bracket-spacing': ['error', 'always'],
+        'max-len': ['error', { "code": 160 }],
         'no-param-reassign': ['error', {
             props: true,
             ignorePropertyModificationsFor: [
