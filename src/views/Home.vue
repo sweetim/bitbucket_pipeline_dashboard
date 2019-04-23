@@ -26,7 +26,7 @@
                             @click="toggleClick(item.fullName)">
                             <v-list-tile-title>{{ item.fullName }}</v-list-tile-title>
                             <v-list-tile-sub-title>
-                                Last updated {{ item.updatedOn }}
+                                Last updated {{ item.updatedOnFromNow }}
                             </v-list-tile-sub-title>
                         </v-list-tile-content>
                         <v-list-tile-action>
@@ -77,7 +77,7 @@ export default {
     },
     computed: {
         repositories() {
-            return this.$store.state.bitbucket.repositories
+            return this.$store.getters.repositories
                 .filter(({ name }) => name
                     .toLocaleLowerCase()
                     .includes(this.searchKey.toLocaleLowerCase()));

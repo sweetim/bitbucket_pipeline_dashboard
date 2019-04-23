@@ -67,15 +67,18 @@ function formatPipelineTitle(x) {
 const state = {
     clientId: process.env.VUE_APP_BITBUCKET_API,
     apiUrl: 'https://api.bitbucket.org/2.0',
-    repositories: [],
-    repositoriesHash: {},
+    repositories: {},
     pipelines: [],
     userInfo: localStorage.getItem(STORAGE_USER_INFO) || '',
 };
 
 export const getters = {
+    repositories({ repositories }) {
+        return Object.values(repositories)
+            .sort((a, b) => b.selected - a.selected || b.lastUpdate - a.lastUpdate);
+    },
     selectedRepositories({ repositories }) {
-        return repositories.filter(x => x.selected);
+        return Object.values(repositories).filter(x => x.selected);
     },
     getUserInfo({ userInfo }) {
         if (!userInfo) return null;
@@ -108,7 +111,7 @@ export const mutations = {
     [SET_REPOSITORIES](state, data) {
         const values = data || {};
 
-        state.repositoriesHash = values
+        state.repositories = values
             .map(x => {
                 const fullName = x.full_name;
                 const selected = localStorage.getItem(fullName) === 'true';
@@ -119,7 +122,8 @@ export const mutations = {
                     slug: x.slug,
                     uuid: x.uuid,
                     link: x.links.html.href,
-                    updatedOn: moment(x.updated_on).fromNow(),
+                    updatedOn: Date.parse(x.updated_on),
+                    updatedOnFromNow: moment(x.updated_on).fromNow(),
                     avatar: x.links.avatar.href,
                     selected,
                 };
@@ -133,9 +137,6 @@ export const mutations = {
 
                 return a;
             }, {});
-
-        state.repositories = Object.values(state.repositoriesHash)
-            .sort((a, b) => b.selected - a.selected);
     },
     [SET_PIPELINES](state, data) {
         const values = data || [];
@@ -161,7 +162,7 @@ export const mutations = {
                     resultIcon,
                     userName: y.creator && y.creator.display_name,
                     avatar: y.creator && y.creator.links.avatar.href,
-                    repoAvatar: state.repositoriesHash[fullName].avatar,
+                    repoAvatar: state.repositories[fullName].avatar,
                     link: `https://bitbucket.org/${y.repository.full_name}/addon/pipelines/home#!/results/${y.build_number}`,
                     completedOn: moment(y.completed_on).fromNow(),
                     createdOn: moment(y.created_on).fromNow(),
@@ -172,9 +173,9 @@ export const mutations = {
             .sort((a, b) => (b[0].resultLevel - a[0].resultLevel || b[0].time - a[0].time));
     },
     [SET_SELECTED_REPOSITORY](state, fullName) {
-        const { selected } = state.repositoriesHash[fullName];
+        const { selected } = state.repositories[fullName];
         const toggleSelected = !selected;
-        state.repositoriesHash[fullName].selected = toggleSelected;
+        state.repositories[fullName].selected = toggleSelected;
 
         if (toggleSelected) {
             localStorage.setItem(fullName, toggleSelected);
@@ -227,7 +228,7 @@ export const actions = {
         }
 
         try {
-            const url = `${state.apiUrl}/repositories/?role=member&pagelen=100&sort=-updated_on`;
+            const url = `${state.apiUrl}/repositories/?role=member&pagelen=100`;
             const data = await loadAllRepos(url);
 
             commit(
