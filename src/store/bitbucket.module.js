@@ -77,6 +77,21 @@ export const getters = {
         return Object.values(repositories)
             .sort((a, b) => b.selected - a.selected || b.lastUpdate - a.lastUpdate);
     },
+    repositoriesGroupByProjectKey({ repositories }) {
+        return Object.values(repositories)
+            .reduce((a, b) => {
+                const { projectKey } = b;
+
+                if (!a[projectKey]) {
+                    // eslint-disable-next-line no-param-reassign
+                    a[projectKey] = [];
+                }
+
+                a[projectKey].push(b);
+
+                return a;
+            }, {});
+    },
     selectedRepositories({ repositories }) {
         return Object.values(repositories).filter(x => x.selected);
     },
@@ -122,6 +137,7 @@ export const mutations = {
                     slug: x.slug,
                     uuid: x.uuid,
                     link: x.links.html.href,
+                    projectKey: (x.project && x.project.key) || '',
                     updatedOn: Date.parse(x.updated_on),
                     updatedOnFromNow: moment(x.updated_on).fromNow(),
                     avatar: x.links.avatar.href,
